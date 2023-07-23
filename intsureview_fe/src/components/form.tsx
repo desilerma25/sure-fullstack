@@ -1,6 +1,6 @@
 import React from "react";
 
-function FormComponent() {
+const FormComponent:React.FC = () => {
     return(
         <div>
             <h1>Hi, I am the form</h1>

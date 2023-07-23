@@ -1,6 +1,6 @@
 import React from 'react';
 
-function HeaderComponent() {
+const HeaderComponent: React.FC = () => {
     return(
         <div>
             <h1>Hi, I am the header</h1>
