@@ -1,8 +1,8 @@
 import React from "react";
-import "./App.css";
-import FooterComponent from "./components/footer";
 import HeaderComponent from "./components/header";
-import FormComponent from "./components/form";
+import FormComponent from "./components/Form/form";
+import FooterComponent from "./components/footer";
+
 
 function App() {
   return (
