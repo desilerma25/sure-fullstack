@@ -1,10 +1,20 @@
 import React from 'react';
+import { AppBar, Toolbar, Typography } from '../../node_modules/@mui/material/index';
+import GppGoodIcon from '@mui/icons-material/GppGood';
+
 
 const HeaderComponent: React.FC = () => {
     return(
-        <div>
-            <h1>Hi, I am the header</h1>
-        </div>
+        <header>
+            <AppBar position="static">
+                <Toolbar>
+                    <GppGoodIcon fontSize='medium'/>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    Surely Reliable Insurance
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+        </header>
     )
 }
 export default HeaderComponent;

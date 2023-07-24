@@ -2,9 +2,11 @@
   "compilerOptions": {
     "target": "es6",
     "module": "esnext",
+    "moduleResolution": "node",
     "jsx": "react",
     "strict": true,
     "esModuleInterop": true,
+    
   },
     "exclude": [
       "node_modules",
