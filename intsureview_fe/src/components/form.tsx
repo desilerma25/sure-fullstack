@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
 
-
 const FormComponent: React.FC = () => {
   // Form state
   const [nameInput, setNameInput] = useState('');
@@ -9,11 +8,13 @@ const FormComponent: React.FC = () => {
   const [radioInput, setRadioInput] = useState('option1');
   const [phoneInput, setPhoneInput] = useState('');
   const [emailInput, setEmailInput] = useState('');
-
+  
 
   // Validation state
   const [phoneError, setPhoneError] = useState('');
   const [nameError, setNameError] = useState('');
+
+  const csrftoken: string | null = getCookie('csrftoken');
 
 const validatePhoneNumber = (phoneInput:string) => {
     const phoneRegex = /^\d{10}$/;
@@ -41,12 +42,61 @@ const validateName = (nameInput:string) => {
     }
 };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     validateName(nameInput);
     validatePhoneNumber(phoneInput);
-    // Circle back here w/ form submission logic here
+
+     const formData = {nameInput, selectInput, radioInput, phoneInput, emailInput};
+
+     async function postData(url: string, data: any, csrftoken: string | null) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken || '',
+          },
+          body: JSON.stringify(data),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+    
+        const responseData = await response.json();
+        return responseData;
+      } catch (error) {
+        console.error('Error:', error);
+        return null;
+      }
+    }
+
+    const url = 'http://127.0.0.1:8000/api/form/';
+
+    const response = await postData(url, formData, csrftoken);
+    if (response !== null) {
+      console.log(response);
+    }
+    //  await fetch('http://127.0.0.1:8000/api/form/', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json',
+    //     'X-CSRFToken': csrftoken
+    //   },
+    //   body: JSON.stringify(formData),
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     console.log(data);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error:', error);
+    //   });
+
   };
 
 
@@ -108,5 +158,20 @@ const validateName = (nameInput:string) => {
    </div>
   );
 };
+
+function getCookie(name: string): string | null {
+  let cookieValue = '';
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + '=') {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
 
 export default FormComponent;
