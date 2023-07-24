@@ -11,87 +11,49 @@ import {
   Select,
   TextField,
 } from "@mui/material";
+import { 
+  postData, 
+  validateName, 
+  validatePhoneNumber 
+} from "../api/formapi";
 
 const FormComponent: React.FC = () => {
-  const url = "http://127.0.0.1:8000/api/form/";
+
 
   // Form state
-  const [nameInput, setNameInput] = useState("");
-  const [selectInput, setSelectInput] = useState("Yes");
-  const [radioInput, setRadioInput] = useState("");
-  const [phoneInput, setPhoneInput] = useState("");
-  const [emailInput, setEmailInput] = useState("");
+  const [nameInput, setNameInput] = useState<string>("");
+  const [selectInput, setSelectInput] = useState<string>("Yes");
+  const [radioInput, setRadioInput] = useState<string>("");
+  const [phoneInput, setPhoneInput] = useState<string>("");
+  const [emailInput, setEmailInput] = useState<string>("");
 
   // Validation state
-  const [phoneError, setPhoneError] = useState("");
-  const [nameError, setNameError] = useState("");
+  const [phoneError, setPhoneError] = useState<string>("");
+  const [nameError, setNameError] = useState<string>("");
 
-  const validatePhoneNumber = (phoneInput: string) => {
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneInput) {
-      setPhoneError("Please enter a phone number");
-      return phoneError;
-    } else if (!phoneRegex.test(phoneInput)) {
-      setPhoneError("Please enter a valid phone number with 10 digits.");
-      return phoneError;
-    } else {
-      setPhoneError("");
-    }
-  };
-
-  const validateName = (nameInput: string) => {
-    const nameRegex = /^[A-Za-z]+$/;
-    if (!nameInput) {
-      setNameError("Please enter a name");
-      return nameError;
-    } else if (!nameRegex.test(nameInput)) {
-      setNameError("Please only enter letters");
-      return nameError;
-    } else {
-      setNameError("");
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    validateName(nameInput);
-    validatePhoneNumber(phoneInput);
+    const phoneError = validatePhoneNumber(phoneInput);
+    setPhoneError(phoneError);
 
-    const formData = {
-      nameInput,
-      selectInput,
-      radioInput,
-      phoneInput,
-      emailInput,
-    };
+    const nameError = validateName(nameInput);
+    setNameError(nameError);
 
-    async function postData(url: string, formData: any) {
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
+    if (!phoneError && !nameError) {
+      const formData = {
+        nameInput,
+        selectInput,
+        radioInput,
+        phoneInput,
+        emailInput,
+      };
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const responseData = await response.json();
-        return responseData;
-      } catch (error) {
-        console.error("Error:", error);
-        return null;
+      const response = await postData(formData);
+      if (response !== null) {
+        console.log(response);
       }
-    }
-
-    const response = await postData(url, formData);
-    if (response !== null) {
-      console.log(response);
     }
   };
 
