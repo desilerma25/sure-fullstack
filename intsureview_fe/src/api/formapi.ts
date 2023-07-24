@@ -22,7 +22,10 @@ export const validateName = (nameInput: string) => {
   }
 };
 
-export const postData = async (formData: any) => {
+export const postData = async (
+  formData: any,
+  setErrorSnackbarOpen: Function,
+) => {
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -34,6 +37,7 @@ export const postData = async (formData: any) => {
     });
 
     if (!response.ok) {
+      setErrorSnackbarOpen(true);
       throw new Error("Network response was not ok");
     }
 
@@ -41,6 +45,7 @@ export const postData = async (formData: any) => {
     return responseData;
   } catch (error) {
     console.error("Error:", error);
+    setErrorSnackbarOpen(true);
     return null;
   }
 };

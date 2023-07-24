@@ -11,15 +11,11 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { 
-  postData, 
-  validateName, 
-  validatePhoneNumber 
-} from "../api/formapi";
+import { postData, validateName, validatePhoneNumber } from "../api/formapi";
+import FormErrorSnackbar from "./FormErrorSnackbar";
+import FormSuccessSnackbar from "./FormSuccessSnackbar";
 
 const FormComponent: React.FC = () => {
-
-
   // Form state
   const [nameInput, setNameInput] = useState<string>("");
   const [selectInput, setSelectInput] = useState<string>("Yes");
@@ -31,6 +27,22 @@ const FormComponent: React.FC = () => {
   const [phoneError, setPhoneError] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
 
+  const [errorSnackbarOpen, setErrorSnackbarOpen] = useState<boolean>(false);
+  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleCloseSnackbar = () => {
+    setErrorSnackbarOpen(false);
+    setSuccessSnackbarOpen(false);
+  };
+
+  const resetForm = () => {
+    setNameInput("");
+    setSelectInput("Yes");
+    setRadioInput("");
+    setPhoneInput("");
+    setEmailInput("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,9 +62,18 @@ const FormComponent: React.FC = () => {
         emailInput,
       };
 
-      const response = await postData(formData);
-      if (response !== null) {
-        console.log(response);
+      try {
+        setLoading(true);
+        const response = await postData(formData, setErrorSnackbarOpen);
+        setLoading(false);
+        if (response !== null) {
+          setSuccessSnackbarOpen(true);
+          console.log(response);
+          resetForm();
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        setErrorSnackbarOpen(true);
       }
     }
   };
@@ -117,10 +138,24 @@ const FormComponent: React.FC = () => {
           margin="normal"
         />
 
-        <Button type="submit" variant="contained" color="primary">
-          Submit
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={loading}
+        >
+          {loading ? "Submitting..." : "Submit"}
         </Button>
       </form>
+
+      <FormErrorSnackbar
+        open={errorSnackbarOpen}
+        onClose={handleCloseSnackbar}
+      />
+      <FormSuccessSnackbar
+        open={successSnackbarOpen}
+        onClose={handleCloseSnackbar}
+      />
     </div>
   );
 };
