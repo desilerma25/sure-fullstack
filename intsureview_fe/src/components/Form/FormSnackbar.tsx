@@ -1,21 +1,23 @@
 import React from "react";
 import { Snackbar } from "@mui/material";
 
-type FormSuccessSnackbarProps = {
+type FormSnackbarProps = {
   open: boolean;
   onClose: () => void;
+  message: string;
 };
 
-const FormSuccessSnackbar: React.FC<FormSuccessSnackbarProps> = ({
+const FormSnackbar: React.FC<FormSnackbarProps> = ({
   open,
   onClose,
+  message,
 }) => {
   return (
     <Snackbar
       open={open}
       autoHideDuration={6000}
       onClose={onClose}
-      message="Form submitted successfully!"
+      message={message}
       anchorOrigin={{
         vertical: "top",
         horizontal: "center",
@@ -24,4 +26,4 @@ const FormSuccessSnackbar: React.FC<FormSuccessSnackbarProps> = ({
   );
 };
 
-export default FormSuccessSnackbar;
+export default FormSnackbar;

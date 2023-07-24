@@ -19,3 +19,14 @@ export const validateName = (nameInput: string) => {
     return "";
   }
 };
+
+export const validateEmail = (emailInput: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailInput) {
+    return "Please enter an email";
+  } else if (!emailRegex.test(emailInput)) {
+    return "Please enter a valid email address";
+  } else {
+    return "";
+  }
+};

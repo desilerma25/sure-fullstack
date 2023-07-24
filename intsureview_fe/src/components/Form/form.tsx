@@ -13,9 +13,12 @@ import {
   TextField,
 } from "@mui/material";
 import { postData } from "../../api/formapi";
-import { validateName, validatePhoneNumber } from "../../utils/FormValidation";
-import FormErrorSnackbar from "./FormErrorSnackbar";
-import FormSuccessSnackbar from "./FormSuccessSnackbar";
+import {
+  validateName,
+  validatePhoneNumber,
+  validateEmail,
+} from "../../utils/FormValidation";
+import FormSnackbar from "./FormSnackbar";
 
 const FormComponent: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -28,14 +31,14 @@ const FormComponent: React.FC = () => {
 
   const [phoneError, setPhoneError] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
 
-  const [errorSnackbarOpen, setErrorSnackbarOpen] = useState<boolean>(false);
-  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const handleCloseSnackbar = () => {
-    setErrorSnackbarOpen(false);
-    setSuccessSnackbarOpen(false);
+    setSnackbarOpen(false);
   };
 
   const resetForm = () => {
@@ -60,13 +63,16 @@ const FormComponent: React.FC = () => {
     } else if (fieldName === "nameInput") {
       const nameError = validateName(value);
       setNameError(nameError);
+    } else if (fieldName === "emailInput") {
+      const emailError = validateEmail(value);
+      setEmailError(emailError);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { nameInput, phoneInput } = formData;
+    const { nameInput, phoneInput, emailInput } = formData;
 
     const phoneError = validatePhoneNumber(phoneInput);
     setPhoneError(phoneError);
@@ -74,18 +80,23 @@ const FormComponent: React.FC = () => {
     const nameError = validateName(nameInput);
     setNameError(nameError);
 
-    if (!phoneError && !nameError) {
+    const emailError = validateEmail(emailInput);
+    setEmailError(emailError);
+
+    if (!phoneError && !nameError && !emailError) {
       try {
         setLoading(true);
-        const response = await postData(formData, setErrorSnackbarOpen);
+        const response = await postData(formData, setSnackbarOpen);
         setLoading(false);
         if (response !== null) {
-          setSuccessSnackbarOpen(true);
+          setSnackbarOpen(true);
+          setSnackbarMessage("Form submitted successfully!");
           resetForm();
         }
       } catch (error) {
         console.error("Error:", error);
-        setErrorSnackbarOpen(true);
+        setSnackbarOpen(true);
+        setSnackbarMessage("An error occurred. Please try again later.");
       }
     }
   };
@@ -152,6 +163,8 @@ const FormComponent: React.FC = () => {
           onChange={(e) => handleFormStateChange("emailInput", e.target.value)}
           fullWidth
           margin="normal"
+          error={!!emailError}
+          helperText={emailError}
         />
 
         <Button
@@ -164,13 +177,10 @@ const FormComponent: React.FC = () => {
         </Button>
       </form>
 
-      <FormErrorSnackbar
-        open={errorSnackbarOpen}
+      <FormSnackbar
+        open={snackbarOpen}
         onClose={handleCloseSnackbar}
-      />
-      <FormSuccessSnackbar
-        open={successSnackbarOpen}
-        onClose={handleCloseSnackbar}
+        message={snackbarMessage}
       />
     </div>
   );
