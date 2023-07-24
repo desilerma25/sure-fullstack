@@ -3,3 +3,9 @@ footer {
     bottom: 0;
     position: fixed;
 }
+
+
+.form {
+    max-width: 33%;
+    margin: auto;
+}
