@@ -2,9 +2,9 @@ import React from "react";
 
 const FooterComponent:React.FC = () => {
     return(
-        <div>
-            <h1>Hi, I am the footer</h1>
-        </div>
+        <footer>
+            <p>Privacy Policy | Contact Us | FAQs | Engineered by Desi Lerma</p>
+        </footer>
     )
 }
 export default FooterComponent;
