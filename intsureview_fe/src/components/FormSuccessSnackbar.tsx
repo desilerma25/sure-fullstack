@@ -17,7 +17,7 @@ const FormSuccessSnackbar: React.FC<FormSuccessSnackbarProps> = ({
       onClose={onClose}
       message="Form submitted successfully!"
       anchorOrigin={{
-        vertical: "bottom",
+        vertical: "top",
         horizontal: "center",
       }}
     />

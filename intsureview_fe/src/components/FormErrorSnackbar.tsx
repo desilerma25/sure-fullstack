@@ -17,7 +17,7 @@ const FormErrorSnackbar: React.FC<FormErrorSnackbarProps> = ({
       onClose={onClose}
       message="An error occurred. Please try again later."
       anchorOrigin={{
-        vertical: "bottom",
+        vertical: "top",
         horizontal: "center",
       }}
     />
