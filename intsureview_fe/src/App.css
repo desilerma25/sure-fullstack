@@ -1,11 +1,10 @@
 footer {
-    margin-top: auto;
-    bottom: 0;
-    position: fixed;
+  margin-top: auto;
+  bottom: 0;
+  position: fixed;
 }
 
-
 .form {
-    max-width: 33%;
-    margin: auto;
+  max-width: 33%;
+  margin: auto;
 }
