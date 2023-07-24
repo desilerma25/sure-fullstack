@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './Form.css';
+import "./Form.css";
 import {
   Button,
   FormControl,
@@ -12,19 +12,20 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { postData, validateName, validatePhoneNumber } from "../../api/formapi";
+import { postData } from "../../api/formapi";
+import { validateName, validatePhoneNumber } from "../../utils/FormValidation";
 import FormErrorSnackbar from "./FormErrorSnackbar";
 import FormSuccessSnackbar from "./FormSuccessSnackbar";
 
 const FormComponent: React.FC = () => {
-  // Form state
-  const [nameInput, setNameInput] = useState<string>("");
-  const [selectInput, setSelectInput] = useState<string>("Yes");
-  const [radioInput, setRadioInput] = useState<string>("");
-  const [phoneInput, setPhoneInput] = useState<string>("");
-  const [emailInput, setEmailInput] = useState<string>("");
+  const [formData, setFormData] = useState({
+    nameInput: "",
+    selectInput: "Yes",
+    radioInput: "",
+    phoneInput: "",
+    emailInput: "",
+  });
 
-  // Validation state
   const [phoneError, setPhoneError] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
 
@@ -38,15 +39,34 @@ const FormComponent: React.FC = () => {
   };
 
   const resetForm = () => {
-    setNameInput("");
-    setSelectInput("Yes");
-    setRadioInput("");
-    setPhoneInput("");
-    setEmailInput("");
+    setFormData({
+      nameInput: "",
+      selectInput: "Yes",
+      radioInput: "",
+      phoneInput: "",
+      emailInput: "",
+    });
+  };
+
+  const handleFormStateChange = (fieldName: string, value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [fieldName]: value,
+    }));
+
+    if (fieldName === "phoneInput") {
+      const phoneError = validatePhoneNumber(value);
+      setPhoneError(phoneError);
+    } else if (fieldName === "nameInput") {
+      const nameError = validateName(value);
+      setNameError(nameError);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const { nameInput, phoneInput } = formData;
 
     const phoneError = validatePhoneNumber(phoneInput);
     setPhoneError(phoneError);
@@ -55,21 +75,12 @@ const FormComponent: React.FC = () => {
     setNameError(nameError);
 
     if (!phoneError && !nameError) {
-      const formData = {
-        nameInput,
-        selectInput,
-        radioInput,
-        phoneInput,
-        emailInput,
-      };
-
       try {
         setLoading(true);
         const response = await postData(formData, setErrorSnackbarOpen);
         setLoading(false);
         if (response !== null) {
           setSuccessSnackbarOpen(true);
-          console.log(response);
           resetForm();
         }
       } catch (error) {
@@ -84,8 +95,8 @@ const FormComponent: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <TextField
           label="What is your first name?"
-          value={nameInput}
-          onChange={(e) => setNameInput(e.target.value)}
+          value={formData.nameInput}
+          onChange={(e) => handleFormStateChange("nameInput", e.target.value)}
           fullWidth
           margin="normal"
           error={!!nameError}
@@ -95,8 +106,10 @@ const FormComponent: React.FC = () => {
         <FormControl fullWidth>
           <InputLabel>Do you like dogs?</InputLabel>
           <Select
-            value={selectInput}
-            onChange={(e) => setSelectInput(e.target.value)}
+            value={formData.selectInput}
+            onChange={(e) =>
+              handleFormStateChange("selectInput", e.target.value)
+            }
           >
             <MenuItem value="Yes">Yes</MenuItem>
             <MenuItem value="No">No</MenuItem>
@@ -108,8 +121,10 @@ const FormComponent: React.FC = () => {
             Is it ever too early for Halloween?
           </FormLabel>
           <RadioGroup
-            value={radioInput}
-            onChange={(e) => setRadioInput(e.target.value)}
+            value={formData.radioInput}
+            onChange={(e) =>
+              handleFormStateChange("radioInput", e.target.value)
+            }
           >
             <FormControlLabel value="never" control={<Radio />} label="Never" />
             <FormControlLabel
@@ -122,8 +137,8 @@ const FormComponent: React.FC = () => {
 
         <TextField
           label="Phone Number"
-          value={phoneInput}
-          onChange={(e) => setPhoneInput(e.target.value)}
+          value={formData.phoneInput}
+          onChange={(e) => handleFormStateChange("phoneInput", e.target.value)}
           fullWidth
           margin="normal"
           error={!!phoneError}
@@ -133,8 +148,8 @@ const FormComponent: React.FC = () => {
         <TextField
           type="email"
           label="Email"
-          value={emailInput}
-          onChange={(e) => setEmailInput(e.target.value)}
+          value={formData.emailInput}
+          onChange={(e) => handleFormStateChange("emailInput", e.target.value)}
           fullWidth
           margin="normal"
         />
