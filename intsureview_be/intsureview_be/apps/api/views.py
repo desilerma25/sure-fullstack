@@ -3,9 +3,9 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from intsureview_be.apps.api.serializers import UserSerializer, GroupSerializer
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
 
-@require_http_methods(["POST"])
+@api_view(["POST"])
 def form_api(request):
     if request.method == "POST":
         try:
